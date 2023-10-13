@@ -6,21 +6,23 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { LayoutAnimation, StyleProp, View, ViewStyle } from "react-native";
+import { LayoutAnimation, Platform, StyleProp, View, ViewStyle } from "react-native";
 import { RNKeyboard } from './module';
 
 // TODO: on ios try to make the animation smoother
 // From: https://medium.com/man-moon/writing-modern-react-native-ui-e317ff956f02
 
+const _type = Platform.OS === "android" ? LayoutAnimation.Types.easeInEaseOut : LayoutAnimation.Types.keyboard;
+
 const defaultAnimation = {
   duration: 200,
   create: {
     duration: 500,
-    type: LayoutAnimation.Types.keyboard,
+    type: _type,
     property: LayoutAnimation.Properties.scaleXY,
   },
   update: {
-    type: LayoutAnimation.Types.keyboard,
+    type: _type,
     springDamping: 200,
   },
 };
