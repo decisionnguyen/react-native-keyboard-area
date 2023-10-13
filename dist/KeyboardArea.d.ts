@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from "react-native";
 interface IProps {
     style?: StyleProp<ViewStyle>;
     /**
@@ -27,6 +27,10 @@ interface IProps {
      * Event fired when keyboard height changes
      */
     onChange?: (isOpen: boolean, height: number) => void;
+    /**
+     * this is props
+     */
+    offsetHeight?: number;
 }
 export declare type KeyboardAreaRef = {
     isOpen: () => boolean;
