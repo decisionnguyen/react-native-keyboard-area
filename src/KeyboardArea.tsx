@@ -85,7 +85,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const [currentHeight, setCurrentHeight] = useState(0);
 
     const open = () => {
-      LayoutAnimation.configureNext(defaultAnimation)
+      if (keyboardHeight.current !== currentHeight) {
+        LayoutAnimation.configureNext(defaultAnimation)
+      }
       isOpen.current = true;
       setCurrentHeight(keyboardHeight.current);
       if (onChange) {
@@ -94,7 +96,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     };
 
     const close = () => {
-      LayoutAnimation.configureNext(defaultAnimation)
+      if (currentHeight !== 0) {
+        LayoutAnimation.configureNext(defaultAnimation)
+      }
       isOpen.current = false;
       setCurrentHeight(0);
       if (onChange) {

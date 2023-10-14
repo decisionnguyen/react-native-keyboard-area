@@ -22,7 +22,9 @@ export const KeyboardArea = forwardRef(({ style, children, isOpen: externalOpen,
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
     const open = () => {
-        LayoutAnimation.configureNext(defaultAnimation);
+        if (keyboardHeight.current !== currentHeight) {
+            LayoutAnimation.configureNext(defaultAnimation);
+        }
         isOpen.current = true;
         setCurrentHeight(keyboardHeight.current);
         if (onChange) {
@@ -30,7 +32,9 @@ export const KeyboardArea = forwardRef(({ style, children, isOpen: externalOpen,
         }
     };
     const close = () => {
-        LayoutAnimation.configureNext(defaultAnimation);
+        if (currentHeight !== 0) {
+            LayoutAnimation.configureNext(defaultAnimation);
+        }
         isOpen.current = false;
         setCurrentHeight(0);
         if (onChange) {
