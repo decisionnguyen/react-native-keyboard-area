@@ -71,7 +71,7 @@ export const KeyboardArea = forwardRef(({ style, children, isOpen: externalOpen,
     useEffect(() => {
         forceOpen.current = externalOpen || false;
         if (forceOpen.current) {
-            open(true);
+            open(false);
         }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
     return <View style={[{ height: currentHeight || offsetHeight }, style]}>{children}</View>;

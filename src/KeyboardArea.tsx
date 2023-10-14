@@ -136,7 +136,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
-        open(true);
+        open(false);
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
