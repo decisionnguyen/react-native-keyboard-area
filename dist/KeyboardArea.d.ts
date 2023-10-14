@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 interface IProps {
     style?: StyleProp<ViewStyle>;

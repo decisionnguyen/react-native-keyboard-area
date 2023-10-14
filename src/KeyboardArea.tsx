@@ -4,10 +4,10 @@ import React, {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
-} from 'react';
+  useState
+} from "react";
 import { LayoutAnimation, Platform, StyleProp, View, ViewStyle } from "react-native";
-import { RNKeyboard } from './module';
+import { RNKeyboard } from "./module";
 
 // TODO: on ios try to make the animation smoother
 // From: https://medium.com/man-moon/writing-modern-react-native-ui-e317ff956f02
@@ -19,12 +19,12 @@ const defaultAnimation = {
   create: {
     duration: 500,
     type: _type,
-    property: LayoutAnimation.Properties.scaleXY,
+    property: LayoutAnimation.Properties.scaleXY
   },
   update: {
     type: _type,
-    springDamping: 200,
-  },
+    springDamping: 200
+  }
 };
 
 interface IProps {
@@ -77,16 +77,16 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       onChange,
       offsetHeight = 0
     },
-    ref,
+    ref
   ) => {
     const isOpen = useRef(false);
     const forceOpen = useRef(false);
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
 
-    const open = () => {
-      if (keyboardHeight.current !== currentHeight) {
-        LayoutAnimation.configureNext(defaultAnimation)
+    const open = (hideAnimation: boolean = false) => {
+      if (keyboardHeight.current !== currentHeight && !hideAnimation) {
+        LayoutAnimation.configureNext(defaultAnimation);
       }
       isOpen.current = true;
       setCurrentHeight(keyboardHeight.current);
@@ -97,7 +97,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
 
     const close = () => {
       if (currentHeight !== 0) {
-        LayoutAnimation.configureNext(defaultAnimation)
+        LayoutAnimation.configureNext(defaultAnimation);
       }
       isOpen.current = false;
       setCurrentHeight(0);
@@ -109,17 +109,20 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useImperativeHandle(ref, () => ({
       isOpen: () => isOpen.current,
       open,
-      close,
+      close
     }));
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
+        let hideAnimation = false;
         if (height > 0 && height !== keyboardHeight.current) {
           keyboardHeight.current = height > minHeight ? height : minHeight;
+        } else {
+          hideAnimation = true;
         }
         const needToOpen = forceOpen.current || height > 0;
         if (needToOpen) {
-          open();
+          open(hideAnimation || false);
         } else {
           close();
         }
@@ -133,10 +136,10 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
-        open();
+        open(true);
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <View style={[{ height: currentHeight || offsetHeight }, style]}>{children}</View>;
-  },
+  }
 );
