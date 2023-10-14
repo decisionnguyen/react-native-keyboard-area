@@ -14,18 +14,18 @@ import { RNKeyboard } from "./module";
 
 const _type = Platform.OS === "android" ? LayoutAnimation.Types.easeInEaseOut : LayoutAnimation.Types.keyboard;
 
-const defaultAnimation = {
-  duration: 200,
-  create: {
-    duration: 500,
-    type: _type,
-    property: LayoutAnimation.Properties.scaleXY
-  },
-  update: {
-    type: _type,
-    springDamping: 200
-  }
-};
+// const defaultAnimation = {
+//   duration: 200,
+//   create: {
+//     duration: 500,
+//     type: _type,
+//     property: LayoutAnimation.Properties.scaleXY
+//   },
+//   update: {
+//     type: _type,
+//     springDamping: 200
+//   }
+// };
 
 interface IProps {
   style?: StyleProp<ViewStyle>;
@@ -84,10 +84,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
 
-    const open = (hideAnimation: boolean = false) => {
-      if (keyboardHeight.current !== currentHeight && !hideAnimation) {
-        LayoutAnimation.configureNext(defaultAnimation);
-      }
+    const open = () => {
       isOpen.current = true;
       setCurrentHeight(keyboardHeight.current);
       if (onChange) {
@@ -96,9 +93,6 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     };
 
     const close = () => {
-      if (currentHeight !== 0) {
-        LayoutAnimation.configureNext(defaultAnimation);
-      }
       isOpen.current = false;
       setCurrentHeight(0);
       if (onChange) {
@@ -114,15 +108,12 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
-        let hideAnimation = false;
         if (height > 0 && height !== keyboardHeight.current) {
           keyboardHeight.current = height > minHeight ? height : minHeight;
-        } else {
-          hideAnimation = true;
         }
         const needToOpen = forceOpen.current || height > 0;
         if (needToOpen) {
-          open(hideAnimation || false);
+          open();
         } else {
           close();
         }
@@ -136,7 +127,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
-        open(false);
+        open();
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
