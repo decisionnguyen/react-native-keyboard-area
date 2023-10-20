@@ -1,31 +1,17 @@
-import React, {
-  forwardRef,
-  ReactNode,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState
-} from "react";
-import { LayoutAnimation, Platform, StyleProp, View, ViewStyle } from "react-native";
-import { RNKeyboard } from "./module";
+import React, {forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState} from "react";
+import {StyleProp, ViewStyle} from "react-native";
+import {RNKeyboard} from "./module";
+import Animated, {
+  Easing,
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
 
 // TODO: on ios try to make the animation smoother
 // From: https://medium.com/man-moon/writing-modern-react-native-ui-e317ff956f02
-
-const _type = Platform.OS === "android" ? LayoutAnimation.Types.easeInEaseOut : LayoutAnimation.Types.keyboard;
-
-// const defaultAnimation = {
-//   duration: 200,
-//   create: {
-//     duration: 500,
-//     type: _type,
-//     property: LayoutAnimation.Properties.scaleXY
-//   },
-//   update: {
-//     type: _type,
-//     springDamping: 200
-//   }
-// };
 
 interface IProps {
   style?: StyleProp<ViewStyle>;
@@ -84,9 +70,18 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
 
+    const keyboardAnimatedShow = useSharedValue(0);
+
+    const animeStyle = useAnimatedStyle(() => {
+      return {
+        height: interpolate(keyboardAnimatedShow.value, [0, 1], [offsetHeight, keyboardHeight.current], { extrapolateRight: Extrapolate.CLAMP })
+      };
+    });
+
     const open = () => {
       isOpen.current = true;
       setCurrentHeight(keyboardHeight.current);
+      keyboardAnimatedShow.value = withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) });
       if (onChange) {
         onChange(true, keyboardHeight.current);
       }
@@ -95,6 +90,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const close = () => {
       isOpen.current = false;
       setCurrentHeight(0);
+      keyboardAnimatedShow.value = withTiming(0, { duration: 200, easing: Easing.inOut(Easing.ease) });
       if (onChange) {
         onChange(false, 0);
       }
@@ -131,6 +127,6 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return <View style={[{ height: currentHeight || offsetHeight }, style]}>{children}</View>;
+    return <Animated.View style={animeStyle}>{children}</Animated.View>;
   }
 );

@@ -1,6 +1,6 @@
 {
   "name": "react-native-keyboard-area",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "This version add offsetHeight props and handle keyboard animation",
   "author": "Thomas Gazzoni",
   "bugs": {
@@ -12,8 +12,7 @@
   },
   "homepage": "https://github.com/decisionnguyen/react-native-keyboard-area",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
   "keywords": [
     "react-native",
     "keyboard",
@@ -22,10 +21,8 @@
   ],
   "scripts": {
     "test": "echo ignore",
-    "build": "tsc",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./src",
-    "semantic-release": "semantic-release",
-    "prepublish": "yarn build"
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@types/react-native": "0.62.16"
