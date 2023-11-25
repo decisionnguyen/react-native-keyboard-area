@@ -33,6 +33,7 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
     private var resizableView: View
     private var parentView: View? = null
     private var keyboardListeners = ArrayList<KeyboardListener>()
+    private var lastLandscape = false; // check last is landscape
 
     init {
         contentView = View.inflate(activity, R.layout.keyboard_popup, null)
@@ -69,7 +70,15 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
         val rect = Rect()
         contentView.rootView.getWindowVisibleDisplayFrame(rect)
         val orientation = activity.resources.configuration.orientation
-        
+
+        // can tinh lai max height cua view khi ma rotate
+        val isCurrentLandscape = rect.bottom > rect.right;
+        if (lastLandscape != isCurrentLandscape) {
+            heightMax = 0;
+            lastLandscape = isCurrentLandscape
+        }
+        // tinh lai heightMax neu ko se bi loi khi rotate from landscape to portrait
+
         if (rect.bottom > heightMax) {
             heightMax = rect.bottom;
         }
