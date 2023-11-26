@@ -83,6 +83,9 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
             heightMax = rect.bottom;
         }
         val keyboardHeight = heightMax - rect.bottom
+
+        Log.e("KeyboardHeightProvider", "maxHeight " + heightMax + " rect = " + rect.bottom + " keyboardHeight = " + keyboardHeight);
+
         KeyboardInfo.keyboardState = if (keyboardHeight > 0) KeyboardInfo.STATE_OPENED else KeyboardInfo.STATE_CLOSED
         if (keyboardHeight > 0) {
             KeyboardInfo.keyboardHeight = keyboardHeight
