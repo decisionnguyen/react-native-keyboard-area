@@ -36,6 +36,7 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
     private var parentView: View? = null
     private var keyboardListeners = ArrayList<KeyboardListener>()
     private var lastLandscape = false; // check last is landscape
+    private var bottomBarHeight = 0; // check bottom bar height in galaxy fold 3 or samsung device error
 
     init {
         contentView = View.inflate(activity, R.layout.keyboard_popup, null)
@@ -86,18 +87,26 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
             heightMax = rect.bottom;
         }
 
-        val keyboardHeight = heightMax - rect.bottom
+        var keyboardHeight = heightMax - rect.bottom
 
         Log.e("KeyboardHeightProvider", "maxHeight " + heightMax + " rect = " + rect.bottom + " keyboardHeight = " + keyboardHeight);
+
+
+        if (keyboardHeight < 100) {
+            bottomBarHeight = keyboardHeight;
+            keyboardHeight = 0;
+        } else {
+            bottomBarHeight = 0;
+        }
 
         KeyboardInfo.keyboardState = if (keyboardHeight > 0) KeyboardInfo.STATE_OPENED else KeyboardInfo.STATE_CLOSED
         if (keyboardHeight > 0) {
             KeyboardInfo.keyboardHeight = keyboardHeight
         }
         if (keyboardHeight != lastKeyboardHeight) {
-            notifyKeyboardHeightChanged(keyboardHeight, orientation)
+            notifyKeyboardHeightChanged(keyboardHeight - bottomBarHeight, orientation)
         }
-        lastKeyboardHeight = keyboardHeight
+        lastKeyboardHeight = keyboardHeight - bottomBarHeight
     }
 
     private fun notifyKeyboardHeightChanged(height: Int, orientation: Int) {
