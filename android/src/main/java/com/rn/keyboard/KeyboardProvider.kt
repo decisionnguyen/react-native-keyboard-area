@@ -1,6 +1,7 @@
 package com.rn.keyboard
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.util.Log
 import android.view.Gravity
@@ -70,10 +71,11 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
     private fun computeKeyboardState() {
         val rect = Rect()
         contentView.rootView.getWindowVisibleDisplayFrame(rect)
-        val orientation = activity.resources.configuration.orientation
+        val orientation = activity.resources.configuration.orientation;
 
         // can tinh lai max height cua view khi ma rotate
-        val isCurrentLandscape = rect.bottom > rect.right;
+        val isCurrentLandscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
+
         if (lastLandscape != isCurrentLandscape) {
             heightMax = 0;
             lastLandscape = isCurrentLandscape
@@ -83,6 +85,7 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
         if (rect.bottom > heightMax) {
             heightMax = rect.bottom;
         }
+
         val keyboardHeight = heightMax - rect.bottom
 
         Log.e("KeyboardHeightProvider", "maxHeight " + heightMax + " rect = " + rect.bottom + " keyboardHeight = " + keyboardHeight);
