@@ -104,8 +104,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
-        if (height > 0 && height !== keyboardHeight.current) {
-          keyboardHeight.current = height > minHeight ? height : minHeight;
+        if (height >= 0 && height !== keyboardHeight.current) {
+          // height >= 0 check case sử dụng bàn phím ngoài
+          keyboardHeight.current = height > offsetHeight ? height : offsetHeight;
         }
         const needToOpen = forceOpen.current || height > 0;
         if (needToOpen) {
