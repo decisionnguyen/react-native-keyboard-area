@@ -78,8 +78,12 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       };
     });
 
-    const open = () => {
+    const open = (force = false) => {
+      if (force) {
+        keyboardHeight.current = minHeight;
+      }
       isOpen.current = true;
+      console.log('open keyboardHeight.current = ', keyboardHeight.current);
       setCurrentHeight(keyboardHeight.current);
       keyboardAnimatedShow.value = withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) });
       if (onChange) {
@@ -104,8 +108,8 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
-        if (height >= 0 && height !== keyboardHeight.current) {
-          // height >= 0 check case sử dụng bàn phím ngoài
+        if (height > 0 && height !== keyboardHeight.current) {
+          // height > 0 check case sử dụng bàn phím ngoài
           keyboardHeight.current = height > offsetHeight ? height : offsetHeight;
         }
         const needToOpen = forceOpen.current || height > 0;
@@ -124,7 +128,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
-        open();
+        open(true);
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
