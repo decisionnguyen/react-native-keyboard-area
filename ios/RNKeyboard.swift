@@ -1,22 +1,28 @@
 import Foundation
 
+var mounted = false;
+
 @objc(RNKeyboard)
 class RNKeyboard: RCTEventEmitter {
-    
-    @objc func startKeyboardListener() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWasShown(_:)),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWasHidden(_:)),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
+    @objc func startKeyboardListener(_ callback: @escaping RCTResponseSenderBlock) {
+        if (!mounted) {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWasShown(_:)),
+                name: UIResponder.keyboardWillShowNotification,
+                object: nil
+            )
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardWasHidden(_:)),
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil
+            )
+            mounted = true;
+            callback(["success"]);
+        } else {
+            callback(["fail"]);
+        }
     }
 
     @objc func stopKeyboardListener() {

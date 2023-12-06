@@ -92,11 +92,6 @@ export class RNKeyboard {
       RNKeyboard.callbacks.push(callback);
     });
 
-    // eventEmitter.addListener(
-    //   KEYBOARD_SIZE_EVENT_NAME,
-    //   RNKeyboard.keyboardListener,
-    // );
-
     // if (!RNKeyboard.isInitialized) {
     //   KBModule.startKeyboardListener();
     //   eventEmitter.addListener(
