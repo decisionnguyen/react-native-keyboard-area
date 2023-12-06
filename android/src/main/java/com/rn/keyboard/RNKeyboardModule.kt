@@ -22,21 +22,29 @@ class RNKeyboardModule(private val reactContext: ReactApplicationContext) : Reac
     }
 
     @ReactMethod
-    fun startKeyboardListener() {
+    fun startKeyboardListener(callback: Callback) {
         try {
             UiThreadUtil.runOnUiThread {
                 val mActivity = currentActivity
-                if(mActivity != null) {
-                    keyboardProvider = KeyboardProvider(mActivity)
-                    keyboardProvider?.addKeyboardListener(object : KeyboardProvider.KeyboardListener{
-                        override fun onHeightChanged(height: Int) {
-                            emit(height)
-                        }
-                    })
+                if (mActivity != null) {
+                    if (keyboardProvider?.checkIsKeyboardListener() == true) {
+                        callback("fail")
+                    } else {
+                        keyboardProvider = KeyboardProvider(mActivity)
+                        keyboardProvider?.addKeyboardListener(object : KeyboardProvider.KeyboardListener {
+                            override fun onHeightChanged(height: Int) {
+                                emit(height)
+                            }
+                        })
+                        callback("success")
+                    }
+                } else {
+                    callback("fail")
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            callback("fail")
         }
     }
 
@@ -81,5 +89,4 @@ class RNKeyboardModule(private val reactContext: ReactApplicationContext) : Reac
         constants.put("SOFT_INPUT_STATE_VISIBLE", LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return constants;
     }
-
 }

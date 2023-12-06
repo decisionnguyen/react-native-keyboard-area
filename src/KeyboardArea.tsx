@@ -1,14 +1,21 @@
-import React, {forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState} from "react";
-import {StyleProp, ViewStyle} from "react-native";
-import {RNKeyboard} from "./module";
+import React, {
+  forwardRef,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
+import { RNKeyboard } from './module';
 import Animated, {
   Easing,
   Extrapolate,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withTiming
-} from "react-native-reanimated";
+  withTiming,
+} from 'react-native-reanimated';
 
 // TODO: on ios try to make the animation smoother
 // From: https://medium.com/man-moon/writing-modern-react-native-ui-e317ff956f02
@@ -43,7 +50,7 @@ interface IProps {
   /**
    * this is props
    */
-  offsetHeight?: number
+  offsetHeight?: number;
 }
 
 export type KeyboardAreaRef = {
@@ -61,9 +68,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       initialHeight = 250,
       minHeight = 250,
       onChange,
-      offsetHeight = 0
+      offsetHeight = 0,
     },
-    ref
+    ref,
   ) => {
     const isOpen = useRef(false);
     const forceOpen = useRef(false);
@@ -74,18 +81,27 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
 
     const animeStyle = useAnimatedStyle(() => {
       return {
-        height: interpolate(keyboardAnimatedShow.value, [0, 1], [offsetHeight, keyboardHeight.current], { extrapolateRight: Extrapolate.CLAMP })
+        height: interpolate(
+          keyboardAnimatedShow.value,
+          [0, 1],
+          [offsetHeight, keyboardHeight.current],
+          { extrapolateRight: Extrapolate.CLAMP },
+        ),
       };
     });
 
-    const open = (force = false) => {
-      if (force) {
-        keyboardHeight.current = minHeight;
-      }
+    const open = () => {
       isOpen.current = true;
-      console.log('open keyboardHeight.current = ', keyboardHeight.current);
+      console.log(
+        'open keyboardHeight.current = ',
+        keyboardHeight.current,
+        ' === ',
+      );
       setCurrentHeight(keyboardHeight.current);
-      keyboardAnimatedShow.value = withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) });
+      keyboardAnimatedShow.value = withTiming(1, {
+        duration: 200,
+        easing: Easing.inOut(Easing.ease),
+      });
       if (onChange) {
         onChange(true, keyboardHeight.current);
       }
@@ -94,7 +110,10 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const close = () => {
       isOpen.current = false;
       setCurrentHeight(0);
-      keyboardAnimatedShow.value = withTiming(0, { duration: 200, easing: Easing.inOut(Easing.ease) });
+      keyboardAnimatedShow.value = withTiming(0, {
+        duration: 200,
+        easing: Easing.inOut(Easing.ease),
+      });
       if (onChange) {
         onChange(false, 0);
       }
@@ -103,14 +122,15 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useImperativeHandle(ref, () => ({
       isOpen: () => isOpen.current,
       open,
-      close
+      close,
     }));
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
         if (height > 0 && height !== keyboardHeight.current) {
           // height > 0 check case sử dụng bàn phím ngoài
-          keyboardHeight.current = height > offsetHeight ? height : offsetHeight;
+          keyboardHeight.current =
+            height > offsetHeight ? height : offsetHeight;
         }
         const needToOpen = forceOpen.current || height > 0;
         if (needToOpen) {
@@ -128,10 +148,10 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
-        open(true);
+        open();
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <Animated.View style={animeStyle}>{children}</Animated.View>;
-  }
+  },
 );

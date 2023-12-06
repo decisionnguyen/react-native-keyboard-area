@@ -51,7 +51,6 @@ export enum SoftInputMode {
 }
 
 export class RNKeyboard {
-  static isInitialized = false;
   static callbacks: keyboardListenerCallback[] = [];
 
   /**
@@ -82,16 +81,32 @@ export class RNKeyboard {
    * @param callback Callback that will be invoked with the current keyboard height
    */
   static addKeyboardListener(callback: keyboardListenerCallback) {
-    if (!RNKeyboard.isInitialized) {
-      KBModule.startKeyboardListener();
-      eventEmitter.addListener(
-        KEYBOARD_SIZE_EVENT_NAME,
-        RNKeyboard.keyboardListener,
-      );
+    KBModule.startKeyboardListener((val: 'fail' | 'success') => {
+      console.log(' startKeyboardListener = ', val);
+      if (val === 'success') {
+        eventEmitter.addListener(
+          KEYBOARD_SIZE_EVENT_NAME,
+          RNKeyboard.keyboardListener,
+        );
+      }
+      RNKeyboard.callbacks.push(callback);
+    });
 
-      RNKeyboard.isInitialized = true;
-    }
-    RNKeyboard.callbacks.push(callback);
+    // eventEmitter.addListener(
+    //   KEYBOARD_SIZE_EVENT_NAME,
+    //   RNKeyboard.keyboardListener,
+    // );
+
+    // if (!RNKeyboard.isInitialized) {
+    //   KBModule.startKeyboardListener();
+    //   eventEmitter.addListener(
+    //     KEYBOARD_SIZE_EVENT_NAME,
+    //     RNKeyboard.keyboardListener,
+    //   );
+
+    //   RNKeyboard.isInitialized = true;
+    // }
+    // RNKeyboard.callbacks.push(callback);
   }
 
   /**
