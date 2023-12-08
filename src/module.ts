@@ -82,7 +82,6 @@ export class RNKeyboard {
    */
   static addKeyboardListener(callback: keyboardListenerCallback) {
     KBModule.startKeyboardListener((val: 'fail' | 'success') => {
-      console.log(' startKeyboardListener = ', val);
       if (val === 'success') {
         eventEmitter.addListener(
           KEYBOARD_SIZE_EVENT_NAME,

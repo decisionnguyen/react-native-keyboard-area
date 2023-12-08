@@ -51,6 +51,14 @@ interface IProps {
    * this is props
    */
   offsetHeight?: number;
+  /**
+   * đây là giá trị mặc định thường được sử dụng khi nó có tai thỏ
+   */
+  extraHeight?: number;
+  /**
+   * đây là chiều cao sẽ bị trừ đi khi bàn phím xuất hiện, xảy ra khi xuất hiện có BottomBar và thông thường chỉ bị trên IOS
+   * giá trị này có thể âm hoặc dương
+   */
 }
 
 export type KeyboardAreaRef = {
@@ -69,6 +77,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       minHeight = 250,
       onChange,
       offsetHeight = 0,
+      extraHeight = 0,
     },
     ref,
   ) => {
@@ -84,19 +93,13 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
         height: interpolate(
           keyboardAnimatedShow.value,
           [0, 1],
-          [offsetHeight, keyboardHeight.current],
+          [offsetHeight, keyboardHeight.current + extraHeight],
           { extrapolateRight: Extrapolate.CLAMP },
         ),
       };
     });
 
     const open = () => {
-      isOpen.current = true;
-      console.log(
-        'open keyboardHeight.current = ',
-        keyboardHeight.current,
-        ' === ',
-      );
       setCurrentHeight(keyboardHeight.current);
       keyboardAnimatedShow.value = withTiming(1, {
         duration: 200,

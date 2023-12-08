@@ -1,9 +1,9 @@
 import Foundation
 
-var mounted = false;
-
 @objc(RNKeyboard)
 class RNKeyboard: RCTEventEmitter {
+    var mounted = false;
+
     @objc func startKeyboardListener(_ callback: @escaping RCTResponseSenderBlock) {
         if (!mounted) {
             NotificationCenter.default.addObserver(
