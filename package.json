@@ -1,6 +1,6 @@
 {
   "name": "react-native-keyboard-area",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "This version add offsetHeight props and handle keyboard animation",
   "author": "Thomas Gazzoni",
   "bugs": {

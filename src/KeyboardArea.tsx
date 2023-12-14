@@ -151,6 +151,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     useEffect(() => {
       forceOpen.current = externalOpen || false;
       if (forceOpen.current) {
+        if (keyboardHeight.current <= minHeight) {
+          keyboardHeight.current = minHeight;
+        }
         open();
       }
     }, [externalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
