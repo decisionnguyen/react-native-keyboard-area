@@ -27,9 +27,10 @@ class RNKeyboardModule(private val reactContext: ReactApplicationContext) : Reac
             UiThreadUtil.runOnUiThread {
                 val mActivity = currentActivity
                 if (mActivity != null) {
-                    if (keyboardProvider?.checkIsKeyboardListener() == true) {
+                    if (keyboardProvider !== null) {
                         callback("fail")
                     } else {
+                        // chỉ init 1 lần duy nhất thooi
                         keyboardProvider = KeyboardProvider(mActivity)
                         keyboardProvider?.addKeyboardListener(object : KeyboardProvider.KeyboardListener {
                             override fun onHeightChanged(height: Int) {
@@ -39,10 +40,12 @@ class RNKeyboardModule(private val reactContext: ReactApplicationContext) : Reac
                         callback("success")
                     }
                 } else {
+                    Log.e("startKeyboardListener", "NoActivity ")
                     callback("fail")
                 }
             }
         } catch (e: Exception) {
+            Log.e("try_catch_keyboard", e.toString())
             e.printStackTrace()
             callback("fail")
         }
@@ -67,6 +70,7 @@ class RNKeyboardModule(private val reactContext: ReactApplicationContext) : Reac
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                     .emit("KeyboardSizeChanges", height)
         } catch (e: InterruptedException) {
+            Log.e("emit_keyboard", e.toString())
             e.printStackTrace()
         }
     }

@@ -34,7 +34,7 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
     private var lastKeyboardHeight = -1
     private var resizableView: View
     private var parentView: View? = null
-    private var keyboardListeners = ArrayList<KeyboardListener>()
+    private var keyboardListener:KeyboardListener? = null
     private var lastLandscape = false; // check last is landscape
     private var bottomBarHeight = 0; // check bottom bar height in galaxy fold 3 or samsung device error
 
@@ -50,6 +50,7 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
 
         parentView = activity.window.decorView.rootView
         parentView?.post {
+            Log.e("addKeyboardListener", "add");
             resizableView.viewTreeObserver.addOnGlobalLayoutListener(getGlobalLayoutListener())
             if (!isShowing && parentView?.windowToken != null) {
                 showAtLocation(parentView, Gravity.NO_GRAVITY, 0, 0)
@@ -57,24 +58,16 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
         }
     }
 
-    fun checkIsKeyboardListener(): Boolean {
-        val length = keyboardListeners.size
-        return length > 0
-    }
-
     fun addKeyboardListener(listener: KeyboardListener) {
-        keyboardListeners.add(listener)
+        keyboardListener = listener
+        return
     }
 
     fun removeKeyboardListener() {
-        keyboardListeners.clear()
+        keyboardListener = null
     }
 
     private fun getGlobalLayoutListener() = ViewTreeObserver.OnGlobalLayoutListener {
-        computeKeyboardState()
-    }
-
-    private fun computeKeyboardState() {
         val rect = Rect()
         contentView.rootView.getWindowVisibleDisplayFrame(rect)
         val orientation = activity.resources.configuration.orientation;
@@ -109,17 +102,17 @@ class KeyboardProvider(private val activity: Activity) : PopupWindow(activity) {
         } else {
             KeyboardInfo.keyboardState = KeyboardInfo.STATE_CLOSED
         }
-        
+
         if (keyboardHeight != lastKeyboardHeight) {
             notifyKeyboardHeightChanged(keyboardHeight - bottomBarHeight, orientation)
         }
         lastKeyboardHeight = keyboardHeight - bottomBarHeight
     }
 
+
+
     private fun notifyKeyboardHeightChanged(height: Int, orientation: Int) {
-        keyboardListeners.forEach {
-            it.onHeightChanged(height)
-        }
+        keyboardListener?.onHeightChanged(height)
     }
 
     interface KeyboardListener {
