@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { Keyboard, StyleProp, ViewStyle } from 'react-native';
 import { RNKeyboard } from './module';
 import Animated, {
   Easing,
@@ -59,6 +59,10 @@ interface IProps {
    * đây là chiều cao sẽ bị trừ đi khi bàn phím xuất hiện, xảy ra khi xuất hiện có BottomBar và thông thường chỉ bị trên IOS
    * giá trị này có thể âm hoặc dương
    */
+  focusing?: boolean;
+  /**
+   * nếu focus thì force open để sửa lỗi trường hợp bên android thỉnh thoảng bị remove event
+   */
 }
 
 export type KeyboardAreaRef = {
@@ -78,6 +82,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       onChange,
       offsetHeight = 0,
       extraHeight = 0,
+      focusing,
     },
     ref,
   ) => {
@@ -85,6 +90,9 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const forceOpen = useRef(false);
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
+
+    const keyboardHeightWhenFocus = useRef(0);
+    const keyboardHeightWhenBlur = useRef(0);
 
     const keyboardAnimatedShow = useSharedValue(0);
 
@@ -127,6 +135,17 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       open,
       close,
     }));
+
+    useEffect(() => {
+      if (typeof focusing === 'undefined') {
+        return;
+      }
+      if (focusing && (keyboardHeight.current > 0 || forceOpen.current)) {
+        open();
+      } else {
+        close();
+      }
+    }, [focusing]);
 
     useEffect(() => {
       const keyboardHeightChanged = (height: number) => {
