@@ -91,9 +91,6 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const keyboardHeight = useRef(initialHeight);
     const [currentHeight, setCurrentHeight] = useState(0);
 
-    const keyboardHeightWhenFocus = useRef(0);
-    const keyboardHeightWhenBlur = useRef(0);
-
     const keyboardAnimatedShow = useSharedValue(0);
 
     const animeStyle = useAnimatedStyle(() => {
@@ -108,6 +105,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     });
 
     const open = () => {
+      isOpen.current = true;
       setCurrentHeight(keyboardHeight.current);
       keyboardAnimatedShow.value = withTiming(1, {
         duration: 200,
@@ -140,11 +138,16 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
       if (typeof focusing === 'undefined') {
         return;
       }
-      if (focusing && (keyboardHeight.current > 0 || forceOpen.current)) {
-        open();
-      } else {
-        close();
-      }
+      setTimeout(() => {
+        if (isOpen.current) {
+          return false;
+        }
+        if (focusing && (keyboardHeight.current > 0 || forceOpen.current)) {
+          open();
+        } else {
+          close();
+        }
+      }, 170);
     }, [focusing]);
 
     useEffect(() => {
