@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Keyboard, StyleProp, ViewStyle } from 'react-native';
+import { Platform, StyleProp, ViewStyle } from 'react-native';
 import { RNKeyboard } from './module';
 import Animated, {
   Easing,
@@ -89,6 +89,7 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
     const isOpen = useRef(false);
     const forceOpen = useRef(false);
     const keyboardHeight = useRef(initialHeight);
+    const keyboardHeightTemp = useRef(0); // using when listener was killed
     const [currentHeight, setCurrentHeight] = useState(0);
 
     const keyboardAnimatedShow = useSharedValue(0);
@@ -143,6 +144,15 @@ export const KeyboardArea = forwardRef<KeyboardAreaRef, IProps>(
           return false;
         }
         if (focusing && (keyboardHeight.current > 0 || forceOpen.current)) {
+          if (Platform.OS === 'android') {
+            if (keyboardHeightTemp.current) {
+              keyboardHeight.current = keyboardHeightTemp.current;
+            } else {
+              keyboardHeightTemp.current =
+                keyboardHeight.current + offsetHeight;
+              keyboardHeight.current = keyboardHeightTemp.current;
+            }
+          }
           open();
         } else {
           close();
